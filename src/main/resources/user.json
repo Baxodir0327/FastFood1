@@ -1,5 +1,15 @@
 [
   {
+    "fullName": "ffttyy",
+    "username": "Baxodirr",
+    "lastProduct": null,
+    "phoneNumber": "+998911638343",
+    "chatId": 922386806,
+    "state": "CHOOSE_MAIN_PAGE_CATEGORY",
+    "chosenCategory": null,
+    "id": "4726b45f-0c67-4504-829d-24ec97f4f7a6"
+  },
+  {
     "fullName": "Bilol",
     "username": "abs_0547",
     "lastProduct": null,
@@ -10,13 +20,13 @@
     "id": "8c3f05a1-1976-43ca-bd73-96bf639e307f"
   },
   {
-    "fullName": "ffttyy",
-    "username": "Baxodirr",
+    "fullName": "d",
+    "username": "davlataliev",
     "lastProduct": null,
-    "phoneNumber": "+998911638343",
-    "chatId": 922386806,
-    "state": "CHOOSE_MAIN_PAGE_CATEGORY",
+    "phoneNumber": "+998931419445",
+    "chatId": 1806459310,
+    "state": "PRESS_CATEGORY_BUTTON",
     "chosenCategory": null,
-    "id": "4726b45f-0c67-4504-829d-24ec97f4f7a6"
+    "id": "9c1e36ff-cadf-4507-ab9f-d655dc15c188"
   }
 ]

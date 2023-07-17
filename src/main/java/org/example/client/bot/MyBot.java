@@ -1,8 +1,8 @@
 package org.example.client.bot;
 
-import lombok.SneakyThrows;
 import org.example.server.convertor.UserConverter;
 import org.example.server.enums.State;
+import org.example.server.model.Category;
 import org.example.server.model.User;
 import org.example.server.service.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,8 +21,6 @@ import java.util.Base64;
 import java.util.List;
 
 import static org.example.client.bot.BotConstants.*;
-import static org.example.server.enums.State.CREATED;
-import static org.example.server.enums.State.SUCCESSFULLY;
 
 
 public class MyBot extends TelegramLongPollingBot {
@@ -54,9 +52,9 @@ public class MyBot extends TelegramLongPollingBot {
                     myExecute(chatId, FIRST_MSG);
                     user.setState(State.ENTER_NAME);
                     userService.update(user);
-                } else if (text.equals("/start") && user.getPhoneNumber() != null) {
+                } else if (text.equals("/start") && user.getPhoneNumber()!=null) {
                     ReplyKeyboard replyKeyboard = pages.mainPage(createButtonService, isAdmin(user.getPhoneNumber()));
-                    myExecute(chatId, "Welcome", replyKeyboard);
+                    myExecute(chatId,"Welcome",replyKeyboard);
                     user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
                     userService.update(user);
                 } else if (user.getState() == State.ENTER_NAME) {
@@ -84,6 +82,33 @@ public class MyBot extends TelegramLongPollingBot {
                     user.setState(SUCCESSFULLY);
                 }else if (text.equals(BACK)){
                     user.setState(/*nimadir*/CREATED);
+                    user.setState(State.PRESS_CATEGORY_BUTTON);
+                    userService.update(user);
+                } else if (admin && user.getState().equals(State.PRESS_CATEGORY_BUTTON)) {
+                    if (text.equals("+ Add Category")) {
+                        myExecute(chatId, "Enter categroy name");
+                        user.setState(State.ADD_CATEGORY);
+                    } else if (text.equals("- Delete Category")) {
+                        myExecute(chatId, "Enter categroy name");
+                        user.setState(State.DELETE_CATEGORY);
+                    }
+                    userService.update(user);
+                } else if (admin && user.getState().equals(State.ADD_CATEGORY)) {
+                    Category category = new Category(text,null);
+                    categoryService.add(category);
+                    user.setState(State.PRESS_CATEGORY_BUTTON);
+                    userService.update(user);
+
+                    ReplyKeyboardMarkup keyboardMarkup = createButtonService.categoryPageButtons(admin, user);
+                    myExecute(chatId,text+ " category added",keyboardMarkup);
+
+                } else if (admin && user.getState().equals(State.DELETE_CATEGORY)) {
+                    categoryService.deleteByName(text);
+                    user.setState(State.PRESS_CATEGORY_BUTTON);
+                    userService.update(user);
+
+                    ReplyKeyboardMarkup keyboardMarkup = createButtonService.categoryPageButtons(admin, user);
+                    myExecute(chatId,text+ " category deleted",keyboardMarkup);
                 }
                 //Share location
             } else if (message.hasLocation()) {
