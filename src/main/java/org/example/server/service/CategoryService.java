@@ -77,4 +77,8 @@ public class CategoryService implements BaseService<Category> {
         return buttons;
     }
 
+    public void deleteByName(String text) {
+        Category category1 = getAll().stream().filter(category -> category.getName().equals(text)).findAny().get();
+        delete(category1.getId());
+    }
 }
