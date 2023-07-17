@@ -1,21 +1,28 @@
 package org.example.client.bot;
 
+import lombok.SneakyThrows;
 import org.example.server.convertor.UserConverter;
 import org.example.server.enums.State;
 import org.example.server.model.User;
-import org.example.server.service.CategoryService;
-import org.example.server.service.CreateButtonService;
-import org.example.server.service.ProductService;
-import org.example.server.service.UserService;
+import org.example.server.service.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+
 import static org.example.client.bot.BotConstants.*;
+import static org.example.server.enums.State.CREATED;
+import static org.example.server.enums.State.SUCCESSFULLY;
 
 
 public class MyBot extends TelegramLongPollingBot {
@@ -47,9 +54,9 @@ public class MyBot extends TelegramLongPollingBot {
                     myExecute(chatId, FIRST_MSG);
                     user.setState(State.ENTER_NAME);
                     userService.update(user);
-                } else if (text.equals("/start") && user.getPhoneNumber()!=null) {
+                } else if (text.equals("/start") && user.getPhoneNumber() != null) {
                     ReplyKeyboard replyKeyboard = pages.mainPage(createButtonService, isAdmin(user.getPhoneNumber()));
-                    myExecute(chatId,"Welcome",replyKeyboard);
+                    myExecute(chatId, "Welcome", replyKeyboard);
                     user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
                     userService.update(user);
                 } else if (user.getState() == State.ENTER_NAME) {
@@ -68,7 +75,21 @@ public class MyBot extends TelegramLongPollingBot {
                     System.out.println("Salom");
                     ReplyKeyboardMarkup replyKeyboardMarkup = createButtonService.categoryPageButtons(isAdmin(user.getPhoneNumber()), user);
                     myExecute(chatId, "Nimadan boshlaymiz " + user.getFullName(), replyKeyboardMarkup);
+                } else if (user.getState().equals(CREATED) && text.equals(BACK)) {
+                    //todo
+                } // agar state created bo'lsa user buyurtma qilmoqchi va telefon raqami
+                // yuborilsa unga qo'ngi'roq bo'ladi!
+                else if (user.getState().equals(CREATED)) {
+                    createButtonService.createShareContactButton(BACK);
+                    user.setState(SUCCESSFULLY);
+                }else if (text.equals(BACK)){
+                    user.setState(/*nimadir*/CREATED);
                 }
+                //Share location
+            } else if (message.hasLocation()) {
+                ShareLocationService.shareLocation(chatId, user);
+                user.setLocation(message.getLocation());
+                user.setState(CREATED);
             } else if (message.hasContact()) {
                 user.setState(State.MAIN_PAGE);
                 String phoneNumber = message.getContact().getPhoneNumber();
@@ -78,6 +99,10 @@ public class MyBot extends TelegramLongPollingBot {
                 myExecute(chatId, "Welcome " + user.getFullName(), replyKeyboard);
                 user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
                 userService.update(user);
+            } else if (user.getState().equals(CREATED) && message.hasContact()) {
+                String phoneNumber = message.getContact().getPhoneNumber();
+                user.setPhoneNumberOfTheRecipient(phoneNumber);
+                myExecute(chatId, "Siz bilan tez orada bog'lanamiz!");
             }
         } else if (update.hasCallbackQuery()) {
 
