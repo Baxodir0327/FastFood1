@@ -13,7 +13,7 @@ import java.util.UUID;
 public class CreateButtonService {
     private UUID id;
 
-    public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle, boolean shareContact) {
+    public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
         List<KeyboardRow> rows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -29,18 +29,32 @@ public class CreateButtonService {
                     row = new KeyboardRow();
                 }
                 KeyboardButton e = new KeyboardButton(buttonsTitle.get(i));
-                e.setRequestContact(shareContact);
                 row.add(e);
             }
         }
 
         rows.add(row);
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setOneTimeKeyboard(shareContact);
-        replyKeyboardMarkup.setSelective(shareContact);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
         replyKeyboardMarkup.setKeyboard(rows);
         replyKeyboardMarkup.setResizeKeyboard(true);
         return replyKeyboardMarkup;
+    }
+    public ReplyKeyboardMarkup createShareContactButton(){
+
+        List<KeyboardRow> rows = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        KeyboardButton shareContact = new KeyboardButton("Share Contact");
+        shareContact.setRequestContact(true);
+        row.add(shareContact);
+        rows.add(row);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setKeyboard(rows);
+        keyboardMarkup.setOneTimeKeyboard(true);
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        return keyboardMarkup;
     }
 
     public InlineKeyboardMarkup createInlineKeyboard(List<String> keyboasrdList, int numberOfRows) {
