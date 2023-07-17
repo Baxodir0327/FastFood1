@@ -1,4 +1,5 @@
 package org.example.server.enums;
 
-public class State {
+public enum State {
+    START,
 }

@@ -1,8 +1,9 @@
 package org.example.server.service;
 
-import com.company.server.model.Product;
+
 import com.google.gson.reflect.TypeToken;
 import lombok.SneakyThrows;
+import org.example.server.model.Product;
 
 import java.io.IOException;
 import java.nio.file.Files;
