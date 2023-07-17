@@ -1,9 +1,10 @@
 package org.example.server.service;
 
-import com.company.server.model.Basket;
-import com.company.server.model.BasketProduct;
+
 import com.google.gson.reflect.TypeToken;
 import lombok.SneakyThrows;
+import org.example.server.model.Basket;
+import org.example.server.model.BasketProduct;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class BasketProductService implements BaseService<BasketProduct> {
-    private Path path = Path.of("src/main/resources/basketProduct.json");
+    Path path = Path.of("src/main/resources/basketProduct.json");
 
     @Override
     public BasketProduct add(BasketProduct basketProduct) {
