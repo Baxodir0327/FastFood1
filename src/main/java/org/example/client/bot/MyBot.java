@@ -1,31 +1,65 @@
 package org.example.client.bot;
 
+import org.example.server.convertor.UserConverter;
+import org.example.server.enums.State;
+import org.example.server.model.User;
+import org.example.server.service.CategoryService;
+import org.example.server.service.CreateButtonService;
+import org.example.server.service.ProductService;
+import org.example.server.service.UserService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
+
 import static org.example.client.bot.BotConstants.*;
 
 
 public class MyBot extends TelegramLongPollingBot {
-//    private static UserService userService = new UserService();
-//    private static UserConverter userConverter = new UserConverter();
-//    private static ProductService productService = new ProductService();
-//    private static CategoryService categoryService = new CategoryService();
-//    private static CreateButtonService createButtonService = new CreateButtonService();
+    private static UserService userService = new UserService();
+    private static UserConverter userConverter = new UserConverter();
+    private static ProductService productService = new ProductService();
+    private static CategoryService categoryService = new CategoryService();
+    private static CreateButtonService createButtonService = new CreateButtonService();
 
-
-    public MyBot(String botToken) {
-        super(botToken);
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
+            Message message = update.getMessage();
+            Long chatId = message.getChatId();
+            String userName = message.getChat().getUserName();
 
+            User user = userConverter.convertUser(chatId, userName);
 
+            if (message.hasText()) {
+                String text = message.getText();
+
+                if (user.getState().equals(State.START) && text.equals("/start")) {
+                    myExecute(chatId, FIRST_MSG);
+                    user.setState(State.ENTER_NAME);
+                    userService.update(user);
+                } else if (user.getState() == State.ENTER_NAME) {
+                    user.setFullName(text);
+                    user.setState(State.PHONE_NUMBER);
+                    userService.update(user);
+                    myExecute(chatId, "enter phone number",
+                            createButtonService.createReplyButton(List.of("\uD83D\uDCDE Share contact"), true));
+                }
+            } else if (message.hasContact()) {
+                user.setState(State.MAIN_PAGE);
+                String phoneNumber = message.getContact().getPhoneNumber();
+                user.setPhoneNumber(phoneNumber);
+                userService.update(user);
+                var page = new Pages();
+                ReplyKeyboard replyKeyboard = page.mainPage(createButtonService, isAdmin(phoneNumber));
+                myExecute(chatId, "choose", replyKeyboard);
+
+            }
         } else if (update.hasCallbackQuery()) {
 
         }
@@ -63,4 +97,3 @@ public class MyBot extends TelegramLongPollingBot {
         return USERNAME;
     }
 }
-

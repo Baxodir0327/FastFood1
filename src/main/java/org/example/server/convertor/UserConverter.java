@@ -7,15 +7,17 @@ import org.example.server.service.UserService;
 
 import java.util.Optional;
 
+import static org.example.server.enums.State.START;
+
 public class UserConverter {
     private  static UserService userService=new UserService();
-    public User convertToEntity(Long chatId, String username) {
+    public User convertUser(Long chatId, String username) {
         Optional<User> optionalUser = userService.getByChatId(chatId);
 
         User user = optionalUser.orElse(User.builder()
                 .chatId(chatId)
                 .username(username)
-                .state(State.START)
+                .state(START)
                 .build());
 
 
