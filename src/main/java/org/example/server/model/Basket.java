@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 public class Basket extends BaseModel {
     private List<BasketProduct> basketProducts;
-    private User myUser;
+    private User user;
 }

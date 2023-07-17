@@ -1,17 +1,18 @@
 package org.example.server.service;
 
+import org.example.server.model.Basket;
+import org.example.server.model.Category;
+import org.example.server.model.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CreateButtonService {
-    private UUID id;
+    private static  BasketService basketService=new BasketService();
 
     public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
@@ -40,7 +41,8 @@ public class CreateButtonService {
         replyKeyboardMarkup.setResizeKeyboard(true);
         return replyKeyboardMarkup;
     }
-    public ReplyKeyboardMarkup createShareContactButton(){
+
+    public ReplyKeyboardMarkup createShareContactButton() {
 
         List<KeyboardRow> rows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -80,4 +82,43 @@ public class CreateButtonService {
         keyboardMarkup.setKeyboard(rows);
         return keyboardMarkup;
     }
+
+    private List<String> orderButton() {
+        return List.of("\uD83D\uDE97 Buyurtma qilish");
+    }
+
+    private List<String> menuButton() {
+        return List.of("\uD83C\uDF7D Menyu");
+    }
+
+    private List<String> basketButton(int count) {
+        return List.of("\uD83D\uDED2 Savat (%d)".formatted(count));
+    }
+    private List<String> backButton(){
+        return List.of("◀\uFE0F Qaytish");
+    }
+
+    public ReplyKeyboardMarkup categoryPageButtons(boolean admin, User user){
+        List<String> userCategoryButton = new ArrayList<>();
+        List<Basket> all = basketService.getAll();
+        Optional<Basket> first = all.stream().filter(basket -> basket.getUser().getChatId().equals(user.getChatId())).findFirst();
+
+        if(first.isEmpty()){
+            userCategoryButton.addAll(menuButton());
+        }else {
+            userCategoryButton.addAll(orderButton());
+            userCategoryButton.addAll(menuButton());
+            int size = first.get().getBasketProducts().size();
+            userCategoryButton.addAll(basketButton(size));
+        }
+
+        CategoryService categoryService = new CategoryService();
+        userCategoryButton.addAll(categoryService.getAll().stream().filter(category -> category.getParentName()==null).map(Category::getName).toList());
+        if (admin){
+            userCategoryButton.addAll(List.of("+ Add Category","- Delete Category"));
+        }
+        userCategoryButton.addAll(backButton());
+        return createReplyButton(userCategoryButton);
+    }
+
 }

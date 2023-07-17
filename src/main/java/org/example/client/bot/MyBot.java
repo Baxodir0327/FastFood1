@@ -12,24 +12,29 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.List;
 
 import static org.example.client.bot.BotConstants.*;
 
 
 public class MyBot extends TelegramLongPollingBot {
+    public MyBot(String botToken) {
+        super(botToken);
+    }
+
     private static UserService userService = new UserService();
     private static UserConverter userConverter = new UserConverter();
     private static ProductService productService = new ProductService();
     private static CategoryService categoryService = new CategoryService();
     private static CreateButtonService createButtonService = new CreateButtonService();
+    private static Pages pages = new Pages();
 
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
+
             Message message = update.getMessage();
             Long chatId = message.getChatId();
             String userName = message.getChat().getUserName();
@@ -38,27 +43,41 @@ public class MyBot extends TelegramLongPollingBot {
 
             if (message.hasText()) {
                 String text = message.getText();
-
                 if (user.getState().equals(State.START) && text.equals("/start")) {
                     myExecute(chatId, FIRST_MSG);
                     user.setState(State.ENTER_NAME);
+                    userService.update(user);
+                } else if (text.equals("/start") && user.getPhoneNumber()!=null) {
+                    ReplyKeyboard replyKeyboard = pages.mainPage(createButtonService, isAdmin(user.getPhoneNumber()));
+                    myExecute(chatId,"Welcome",replyKeyboard);
+                    user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
                     userService.update(user);
                 } else if (user.getState() == State.ENTER_NAME) {
                     user.setFullName(text);
                     user.setState(State.PHONE_NUMBER);
                     userService.update(user);
+                    ReplyKeyboardMarkup shareContactButton = createButtonService.createShareContactButton();
                     myExecute(chatId, "enter phone number",
-                            createButtonService.createReplyButton(List.of("\uD83D\uDCDE Share contact"), true));
+                            shareContactButton);
+                } else if (user.getState() == State.MAIN_PAGE) {
+                    ReplyKeyboard replyKeyboard = pages.mainPage(createButtonService, isAdmin(user.getPhoneNumber()));
+                    myExecute(chatId, "Welcome " + user.getFullName(), replyKeyboard);
+                    user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
+                    userService.update(user);
+                } else if (user.getState() == State.CHOOSE_MAIN_PAGE_CATEGORY && text.equals(BOOK_BUTTON)) {
+                    System.out.println("Salom");
+                    ReplyKeyboardMarkup replyKeyboardMarkup = createButtonService.categoryPageButtons(isAdmin(user.getPhoneNumber()), user);
+                    myExecute(chatId, "Nimadan boshlaymiz " + user.getFullName(), replyKeyboardMarkup);
                 }
             } else if (message.hasContact()) {
                 user.setState(State.MAIN_PAGE);
                 String phoneNumber = message.getContact().getPhoneNumber();
                 user.setPhoneNumber(phoneNumber);
                 userService.update(user);
-                var page = new Pages();
-                ReplyKeyboard replyKeyboard = page.mainPage(createButtonService, isAdmin(phoneNumber));
-                myExecute(chatId, "choose", replyKeyboard);
-
+                ReplyKeyboard replyKeyboard = pages.mainPage(createButtonService, isAdmin(phoneNumber));
+                myExecute(chatId, "Welcome " + user.getFullName(), replyKeyboard);
+                user.setState(State.CHOOSE_MAIN_PAGE_CATEGORY);
+                userService.update(user);
             }
         } else if (update.hasCallbackQuery()) {
 

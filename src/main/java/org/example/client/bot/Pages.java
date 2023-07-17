@@ -11,6 +11,6 @@ public class Pages {
 
     public ReplyKeyboard mainPage(CreateButtonService createButtonService, boolean admin) {
         List<String> mainButtons = categoryService.getMainPageCategory(admin);
-        return createButtonService.createReplyButton(mainButtons, false);
+        return createButtonService.createReplyButton(mainButtons);
     }
 }
