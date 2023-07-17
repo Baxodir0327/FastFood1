@@ -2,6 +2,7 @@ package org.example.server.model;
 
 import lombok.*;
 import org.example.server.enums.State;
+import org.telegram.telegrambots.meta.api.objects.Location;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,4 +17,6 @@ public class User extends BaseModel{
     private Long chatId;
     private State state;
     private String chosenCategory;
+    private Location location;
+    private String phoneNumberOfTheRecipient;
 }

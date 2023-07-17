@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.*;
 
 public class CreateButtonService {
-    private static  BasketService basketService=new BasketService();
+    private static BasketService basketService = new BasketService();
 
     public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
@@ -59,6 +59,27 @@ public class CreateButtonService {
         return keyboardMarkup;
     }
 
+    public ReplyKeyboardMarkup createShareContactButton(String buttonMessage) {
+
+        List<KeyboardRow> rows = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardButton shareContact = new KeyboardButton("Share Contact");
+        KeyboardButton button = new KeyboardButton(buttonMessage);
+        shareContact.setRequestContact(true);
+        row.add(shareContact);
+        row1.add(button);
+        rows.add(row);
+        rows.add(row1);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setKeyboard(rows);
+        keyboardMarkup.setOneTimeKeyboard(true);
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        return keyboardMarkup;
+    }
+
     public InlineKeyboardMarkup createInlineKeyboard(List<String> keyboasrdList, int numberOfRows) {
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -94,18 +115,19 @@ public class CreateButtonService {
     private List<String> basketButton(int count) {
         return List.of("\uD83D\uDED2 Savat (%d)".formatted(count));
     }
-    private List<String> backButton(){
+
+    private List<String> backButton() {
         return List.of("◀\uFE0F Qaytish");
     }
 
-    public ReplyKeyboardMarkup categoryPageButtons(boolean admin, User user){
+    public ReplyKeyboardMarkup categoryPageButtons(boolean admin, User user) {
         List<String> userCategoryButton = new ArrayList<>();
         List<Basket> all = basketService.getAll();
         Optional<Basket> first = all.stream().filter(basket -> basket.getUser().getChatId().equals(user.getChatId())).findFirst();
 
-        if(first.isEmpty()){
+        if (first.isEmpty()) {
             userCategoryButton.addAll(menuButton());
-        }else {
+        } else {
             userCategoryButton.addAll(orderButton());
             userCategoryButton.addAll(menuButton());
             int size = first.get().getBasketProducts().size();
@@ -113,9 +135,9 @@ public class CreateButtonService {
         }
 
         CategoryService categoryService = new CategoryService();
-        userCategoryButton.addAll(categoryService.getAll().stream().filter(category -> category.getParentName()==null).map(Category::getName).toList());
-        if (admin){
-            userCategoryButton.addAll(List.of("+ Add Category","- Delete Category"));
+        userCategoryButton.addAll(categoryService.getAll().stream().filter(category -> category.getParentName() == null).map(Category::getName).toList());
+        if (admin) {
+            userCategoryButton.addAll(List.of("+ Add Category", "- Delete Category"));
         }
         userCategoryButton.addAll(backButton());
         return createReplyButton(userCategoryButton);

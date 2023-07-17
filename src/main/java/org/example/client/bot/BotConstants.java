@@ -14,6 +14,8 @@ public class BotConstants {
             """;
     public static final List<String> ADMIN_NUMBERS = new ArrayList<>(List.of("+998931419445", "+998911638343"));
     public static final String BOOK_BUTTON ="\uD83D\uDECD Buyurtma berish";
+    public static final String  BACK = "◀\uFE0F Orqaga qaytish";
+    public static final String LOCATION = "\uD83D\uDCCDMening joylashuvim";
 
 
 }
