@@ -1,8 +1,7 @@
-package org.example.server.service;
-
-import com.company.server.model.Category;
 import com.google.gson.reflect.TypeToken;
 import lombok.SneakyThrows;
+import org.example.server.model.Category;
+import org.example.server.service.BaseService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

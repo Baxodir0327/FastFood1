@@ -1,9 +1,9 @@
 package org.example.server.service;
 
-import com.company.server.model.Basket;
-import com.company.server.model.BasketProduct;
 import com.google.gson.reflect.TypeToken;
 import lombok.SneakyThrows;
+import org.example.server.model.Basket;
+import org.example.server.model.BasketProduct;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
