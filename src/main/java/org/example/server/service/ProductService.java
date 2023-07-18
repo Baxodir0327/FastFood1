@@ -3,6 +3,7 @@ package org.example.server.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.SneakyThrows;
+import org.example.server.model.Category;
 import org.example.server.model.Product;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-public class ProductService{
+public class ProductService {
     String path = "src/main/resources/product.json";
     Gson gson = new Gson();
 
@@ -53,7 +54,8 @@ public class ProductService{
 
     @SneakyThrows
     public List<Product> readFile() {
-        return gson.fromJson(Files.readString(Path.of(path)), new TypeToken<List<Product>>() {}.getType());
+        return gson.fromJson(Files.readString(Path.of(path)), new TypeToken<List<Product>>() {
+        }.getType());
     }
 
     public List<Product> getProductsByCategoryName(String text) {
@@ -61,5 +63,10 @@ public class ProductService{
                 .stream()
                 .filter(product -> product.getName().equals(text))
                 .toList();
+    }
+
+    public void deleteByName(String text) {
+        Product product1 = getAll().stream().filter(product -> product.getName().equals(text)).findAny().get();
+        delete(product1.getId());
     }
 }

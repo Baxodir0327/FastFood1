@@ -2,6 +2,7 @@ package org.example.server.service;
 
 import org.example.server.model.Basket;
 import org.example.server.model.Category;
+import org.example.server.model.Product;
 import org.example.server.model.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -10,9 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CreateButtonService {
-    private static  BasketService basketService=new BasketService();
+    private static BasketService basketService = new BasketService();
+    private static ProductService productService = new ProductService();
 
     public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
@@ -94,18 +97,19 @@ public class CreateButtonService {
     private List<String> basketButton(int count) {
         return List.of("\uD83D\uDED2 Savat (%d)".formatted(count));
     }
-    private List<String> backButton(){
+
+    private List<String> backButton() {
         return List.of("◀\uFE0F Qaytish");
     }
 
-    public ReplyKeyboardMarkup categoryPageButtons(boolean admin, User user){
+    public ReplyKeyboardMarkup categoryPageButtons(boolean admin, User user) {
         List<String> userCategoryButton = new ArrayList<>();
         List<Basket> all = basketService.getAll();
         Optional<Basket> first = all.stream().filter(basket -> basket.getUser().getChatId().equals(user.getChatId())).findFirst();
 
-        if(first.isEmpty()){
+        if (first.isEmpty()) {
             userCategoryButton.addAll(menuButton());
-        }else {
+        } else {
             userCategoryButton.addAll(orderButton());
             userCategoryButton.addAll(menuButton());
             int size = first.get().getBasketProducts().size();
@@ -113,12 +117,21 @@ public class CreateButtonService {
         }
 
         CategoryService categoryService = new CategoryService();
-        userCategoryButton.addAll(categoryService.getAll().stream().filter(category -> category.getParentName()==null).map(Category::getName).toList());
-        if (admin){
-            userCategoryButton.addAll(List.of("+ Add Category","- Delete Category"));
+        userCategoryButton.addAll(categoryService.getAll().stream().filter(category -> category.getParentName() == null).map(Category::getName).toList());
+        if (admin) {
+            userCategoryButton.addAll(List.of("+ Add Category", "- Delete Category"));
         }
         userCategoryButton.addAll(backButton());
         return createReplyButton(userCategoryButton);
     }
 
+    public ReplyKeyboardMarkup productPageButtons(String text, boolean admin) {
+        System.out.println(text);
+        List<String> productList = productService.getAll().stream().filter(product -> product.getCategoryName().equals(text)).map(product -> product.getName()).collect(Collectors.toList());
+        if (admin) {
+            productList.addAll(List.of("+ Add Product", "- Delete Product"));
+        }
+        productList.addAll(backButton());
+        return createReplyButton(productList);
+    }
 }
