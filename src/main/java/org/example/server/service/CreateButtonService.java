@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 
 public class CreateButtonService {
     private static BasketService basketService = new BasketService();
+
     private static ProductService productService = new ProductService();
+
 
     public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
@@ -53,6 +55,27 @@ public class CreateButtonService {
         shareContact.setRequestContact(true);
         row.add(shareContact);
         rows.add(row);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setKeyboard(rows);
+        keyboardMarkup.setOneTimeKeyboard(true);
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        return keyboardMarkup;
+    }
+
+    public ReplyKeyboardMarkup createShareContactButton(String buttonMessage) {
+
+        List<KeyboardRow> rows = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardButton shareContact = new KeyboardButton("Share Contact");
+        KeyboardButton button = new KeyboardButton(buttonMessage);
+        shareContact.setRequestContact(true);
+        row.add(shareContact);
+        row1.add(button);
+        rows.add(row);
+        rows.add(row1);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setKeyboard(rows);

@@ -1,7 +1,7 @@
 package org.example.server.enums;
 
-//Akmal aka
 public enum State {
+
     START,
     PHONE_NUMBER,
     MAIN_PAGE,
@@ -14,6 +14,8 @@ public enum State {
     ADD_CATEGORY,
     DELETE_CATEGORY,
     DELETE_PRODUCT,
-    ENTER_NAME
+    ENTER_NAME,
+
+     CREATED, SUCCESSFULLY,
 
 }
