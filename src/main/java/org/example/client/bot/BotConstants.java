@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BotConstants {
     public static final String USERNAME = "https://t.me/bildikbot";
-    public static final String TOKEN = "5261432219:AAF46E6Ldz-p0aR6zqT3iHXZiinoNtN9A9g";
+    public static final String TOKEN = "6032607553:AAG93Tcwe9I4x3J_H30i8bYHq9UfNzdpmVE";
     public static final String FIRST_MSG = """
             Assalomu Alaykum! Bizning botdan foydalanish uchun ro'yxatdan o'ting.
             ism familyangizni kiriting:

@@ -1,32 +1,32 @@
 [
   {
-    "fullName": "ffttyy",
-    "username": "Baxodirr",
-    "lastProduct": null,
-    "phoneNumber": "+998911638343",
-    "chatId": 922386806,
-    "state": "CHOOSE_MAIN_PAGE_CATEGORY",
-    "chosenCategory": null,
-    "id": "4726b45f-0c67-4504-829d-24ec97f4f7a6"
-  },
-  {
-    "fullName": "Bilol",
-    "username": "abs_0547",
-    "lastProduct": null,
-    "phoneNumber": "+998931240547",
-    "chatId": 5843624591,
-    "state": "CHOOSE_MAIN_PAGE_CATEGORY",
-    "chosenCategory": null,
-    "id": "8c3f05a1-1976-43ca-bd73-96bf639e307f"
-  },
-  {
-    "fullName": "d",
+    "fullName": "asd",
     "username": "davlataliev",
     "lastProduct": null,
     "phoneNumber": "+998931419445",
     "chatId": 1806459310,
     "state": "PRESS_CATEGORY_BUTTON",
     "chosenCategory": null,
-    "id": "9c1e36ff-cadf-4507-ab9f-d655dc15c188"
+    "id": "53d30528-19fc-4fb2-8b26-0949cd89c6c5"
+  },
+  {
+    "fullName": "as",
+    "username": "Legolac",
+    "lastProduct": null,
+    "phoneNumber": "+998941701605",
+    "chatId": 692120240,
+    "state": "CHOOSE_PRODUCT",
+    "chosenCategory": null,
+    "id": "3cfe4ac1-90d2-4707-899a-181049455f26"
+  },
+  {
+    "fullName": "Baxodir",
+    "username": "Baxodirr",
+    "lastProduct": "mini lavash",
+    "phoneNumber": "+998911638343",
+    "chatId": 922386806,
+    "state": "CHOOSE_MAIN_PAGE_CATEGORY",
+    "chosenCategory": "🍟 Kombo",
+    "id": "f7944e6a-4ced-442d-8b36-853accb7ce5a"
   }
 ]

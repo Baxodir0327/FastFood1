@@ -2,6 +2,7 @@ package org.example.server.service;
 
 import org.example.server.model.Basket;
 import org.example.server.model.Category;
+import org.example.server.model.Product;
 import org.example.server.model.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -10,9 +11,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CreateButtonService {
     private static BasketService basketService = new BasketService();
+
+    private static ProductService productService = new ProductService();
+
 
     public ReplyKeyboardMarkup createReplyButton(List<String> buttonsTitle) {
 
@@ -143,4 +148,13 @@ public class CreateButtonService {
         return createReplyButton(userCategoryButton);
     }
 
+    public ReplyKeyboardMarkup productPageButtons(String text, boolean admin) {
+        System.out.println(text);
+        List<String> productList = productService.getAll().stream().filter(product -> product.getCategoryName().equals(text)).map(product -> product.getName()).collect(Collectors.toList());
+        if (admin) {
+            productList.addAll(List.of("+ Add Product", "- Delete Product"));
+        }
+        productList.addAll(backButton());
+        return createReplyButton(productList);
+    }
 }
